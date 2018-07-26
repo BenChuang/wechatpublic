@@ -33,10 +33,10 @@ public class WeChatPServer {
                             if (reqXml.getMsgType() == WechatMsgType.TEXT) {
                                 System.out.println(req.connection().remoteAddress() + ": " + reqXml.getStringContent());
                                 WechatMsgXml respXml = WechatXmlHelper.reqToRespMsg(reqXml);
-                                respXml.setStringContent("生活就像海洋，只有意志坚强的人才能到达彼岸");
+                                respXml.setStringContent(new String("生活就像海洋，只有意志坚强的人才能到达彼岸".getBytes(), "ISO-8859-1"));
                                 req.response().end(respXml.toString());
                             }
-                        } catch (DocumentException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
