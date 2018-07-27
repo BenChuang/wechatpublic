@@ -80,10 +80,10 @@ public class WechatXmlHelper {
     public static void main(String[] args) {
         String reqStr = "<xml><ToUserName><![CDATA[gh_c5a9bb72c452]]></ToUserName>\n" +
                 "<FromUserName><![CDATA[opkTR0qyq0_USM9ANM9ePExe5oPU]]></FromUserName>\n" +
-                "<CreateTime>1532602593</CreateTime>\n" +
+                "<CreateTime>1532688724</CreateTime>\n" +
                 "<MsgType><![CDATA[text]]></MsgType>\n" +
                 "<Content><![CDATA[jj]]></Content>\n" +
-                "<MsgId>6582478015134523599</MsgId>\n" +
+                "<MsgId>6582847944962708364</MsgId>\n" +
                 "</xml>\n";
         try {
             WechatMsgXml reqXml = WechatXmlHelper.getWechatMsgXml(reqStr);

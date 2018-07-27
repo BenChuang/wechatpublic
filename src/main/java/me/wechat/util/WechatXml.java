@@ -39,7 +39,7 @@ public class WechatXml {
         try {
             WechatXmlNode newNode = node.clone();
             newNode.setNodeKey(key);
-            dataNodes.put(key.toLowerCase(), node);
+            dataNodes.put(key.toLowerCase(), newNode);
         } catch (CloneNotSupportedException e) {
             //throw exception
         }
