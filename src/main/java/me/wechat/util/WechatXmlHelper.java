@@ -69,6 +69,7 @@ public class WechatXmlHelper {
     private static String formatXml(String strXml) {
         strXml = strXml.replaceAll("<\\s?!\\s?\\[\\s?CDATA\\s?\\[", "");
         strXml = strXml.replaceAll("\\]\\s?\\]\\s?>", "");
+        strXml = strXml.replaceAll("\\&", "&amp;");
         strXml = strXml.replaceAll("\n", "");
         return strXml;
     }

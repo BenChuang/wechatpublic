@@ -24,10 +24,11 @@ public class WeChatPServer {
                 String path = req.path();
                 //区块链大数据分析页面
                 if (path.equals("/index")) {
-                    req.response().putHeader("Content-type", "text/html;charset=utf-8").setChunked(true).write("<html><head></head><body>hello world</body></html>", "utf-8").end();
+                    req.response().putHeader("Content-type", "text/html;charset=utf-8").end("<html><head></head><body>hello world</body></html>", "utf-8");
                 } else {
                     if (body.length() > 0) {
                         String reqXmlStr = body.toString();
+                        System.out.print("req body content: " + reqXmlStr);
                         try {
                             WechatMsgXml reqXml = WechatXmlHelper.getWechatMsgXml(reqXmlStr);
                             if (reqXml.getMsgType() == WechatMsgType.TEXT) {
