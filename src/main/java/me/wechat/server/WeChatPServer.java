@@ -34,7 +34,7 @@ public class WeChatPServer {
                                 System.out.println(req.connection().remoteAddress() + ": " + reqXml.getStringContent());
                                 WechatMsgXml respXml = WechatXmlHelper.reqToRespMsg(reqXml);
                                 respXml.setStringContent(new String("生活就像海洋，只有意志坚强的人才能到达彼岸".getBytes(), "ISO-8859-1"));
-                                req.response().end(respXml.toString());
+                                req.response().putHeader("Content-type", "text/xml;charset=utf-8").end(respXml.toString(), "utf-8");
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
