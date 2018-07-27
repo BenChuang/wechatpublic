@@ -44,9 +44,9 @@ public class WeChatPServer {
                             WechatXml reqXml = WechatXmlHelper.getWechatXml(reqXmlStr);
                             if (reqXml.isMsgXml()) {
                                 WechatMsgXml respXml = WechatXmlHelper.reqToRespMsg(reqXml);
-                                System.out.println("resp: " + respXml.toString());
                                 //全部编码改成utf-8
                                 respXml.setMsgContent(new String("生活就像海洋，只有意志坚强的人才能到达彼岸".getBytes(), "utf-8"));
+                                System.out.println("resp: " + respXml.toString());
                                 req.response().putHeader("Content-type", "text/xml;charset=utf-8").end(respXml.toString(), "utf-8");
                             } else {
                                 System.out.println("resp: success");
