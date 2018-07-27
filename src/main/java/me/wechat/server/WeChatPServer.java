@@ -2,14 +2,11 @@ package me.wechat.server;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientOptions;
-import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.*;
 import io.vertx.core.net.SocketAddress;
 import me.wechat.util.WechatMsgXml;
 import me.wechat.util.WechatXml;
 import me.wechat.util.WechatXmlHelper;
-import org.jdom2.input.SAXBuilder;
 
 public class WeChatPServer {
 
@@ -20,16 +17,19 @@ public class WeChatPServer {
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         HttpServer server = vertx.createHttpServer();
-        HttpClient client = vertx.createHttpClient(new HttpClientOptions().setSsl(true));
+        HttpClient accessTokenClient = vertx.createHttpClient(new HttpClientOptions()
+                .setSsl(true)
+                .setDefaultHost("api.weixin.qq.com")
+                .setDefaultPort(443));
         server.requestHandler(req -> {
             SocketAddress remoteAddress = req.remoteAddress();
             System.out.println("remote address " + remoteAddress.toString());
             //区块链大数据分析页面
-            if (req.path().equals("/index")) {
+            if (req.path().startsWith("/index")) {
                 String code = req.getParam("code");
                 String accessTokenApiHost = "api.weixin.qq.com";
                 String accessTokenApiPath = "/sns/oauth2/access_token?appid=" + APP_ID + "&secret=" + APP_SECRET + "&code=" + code + "&grant_type=authorization_code";
-                client.getNow(accessTokenApiHost, accessTokenApiPath, resp -> {
+                accessTokenClient.getNow(accessTokenApiPath, resp -> {
                     resp.bodyHandler(accessTokenContent -> {
                         System.out.println("accessTokenContent: " + accessTokenContent);
                         req.response().putHeader("Content-type", "text/html;charset=utf-8").end("<html><head></head><body>hello world</body></html>", "utf-8");
