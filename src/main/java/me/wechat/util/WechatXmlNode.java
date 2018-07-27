@@ -1,6 +1,6 @@
 package me.wechat.util;
 
-public class WechatXmlNode {
+public class WechatXmlNode implements Cloneable {
 
     private String nodeKey;
     private Object nodeValue;
@@ -31,5 +31,10 @@ public class WechatXmlNode {
         return "<" + getNodeKey() + ">" +
                 getNodeValue() +
                 "</" + getNodeKey() + ">";
+    }
+
+    @Override
+    public WechatXmlNode clone() throws CloneNotSupportedException {
+        return (WechatXmlNode)super.clone();
     }
 }

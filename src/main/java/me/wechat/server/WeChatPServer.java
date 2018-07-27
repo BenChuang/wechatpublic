@@ -4,10 +4,9 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.net.SocketAddress;
-import me.wechat.util.WechatMsgType;
 import me.wechat.util.WechatMsgXml;
+import me.wechat.util.WechatXml;
 import me.wechat.util.WechatXmlHelper;
-import org.dom4j.DocumentException;
 import org.jdom2.input.SAXBuilder;
 
 public class WeChatPServer {
@@ -30,13 +29,15 @@ public class WeChatPServer {
                         String reqXmlStr = body.toString();
                         System.out.print("req body content: " + reqXmlStr);
                         try {
-                            WechatMsgXml reqXml = WechatXmlHelper.getWechatMsgXml(reqXmlStr);
-                            if (reqXml.getMsgType() == WechatMsgType.TEXT) {
-                                System.out.println(req.connection().remoteAddress() + ": " + reqXml.getStringContent());
+                            WechatXml reqXml = WechatXmlHelper.getWechatXml(reqXmlStr);
+                            if (reqXml.isMsgXml()) {
+                                System.out.println(req.connection().remoteAddress() + ": " + reqXml.convertToWechatMsgXml().getMsgContent());
                                 WechatMsgXml respXml = WechatXmlHelper.reqToRespMsg(reqXml);
                                 //全部编码改成utf-8
-                                respXml.setStringContent(new String("生活就像海洋，只有意志坚强的人才能到达彼岸".getBytes(), "utf-8"));
+                                respXml.setMsgContent(new String("生活就像海洋，只有意志坚强的人才能到达彼岸".getBytes(), "utf-8"));
                                 req.response().putHeader("Content-type", "text/xml;charset=utf-8").end(respXml.toString(), "utf-8");
+                            } else {
+                                req.response().putHeader("Content-type", "text/plain;charset=utf-8").end("success", "utf-8");
                             }
                         } catch (Exception e) {
                             e.printStackTrace();

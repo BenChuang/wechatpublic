@@ -1,22 +1,20 @@
 package me.wechat.util;
 
+import org.dom4j.Node;
+import org.dom4j.tree.DefaultCDATA;
+import org.dom4j.tree.DefaultText;
+
 import java.util.*;
 
 public class WechatXml {
 
-    private WechatXmlNode rootNode = new WechatXmlNode("xml", "");
-    private Map<String, WechatXmlNode> dataNodes = new LinkedHashMap<>(10);
-    private boolean isBadXml;
-    private String errerMsg = "";
-    private Throwable errerThrowable;
+    WechatXmlNode rootNode = new WechatXmlNode("xml", "");
+    Map<String, WechatXmlNode> dataNodes = new HashMap<>(10);
+    boolean isBadXml;
+    String errerMsg = "";
+    Throwable errerThrowable;
 
     public WechatXml() {
-        dataNodes.put("tousername", new WechatXmlCDATA("ToUserName", ""));
-        dataNodes.put("fromusername", new WechatXmlCDATA("FromUserName", ""));
-        dataNodes.put("createtime", new WechatXmlNode("CreateTime", ""));
-        dataNodes.put("msgtype", new WechatXmlCDATA("MsgType", ""));
-        dataNodes.put("content", new WechatXmlCDATA("Content", ""));
-        dataNodes.put("msgid", new WechatXmlNode("MsgId", ""));
     }
 
     public WechatXml(String errerMsg, Throwable t) {
@@ -26,11 +24,41 @@ public class WechatXml {
         this.errerThrowable = t;
     }
 
-    public void setNodeValue(String key, Object value) {
+    protected void putNode(String key, Node content) {
         key = key.toLowerCase();
-        WechatXmlNode node = dataNodes.get(key);
+        if (content instanceof DefaultCDATA) {
+            WechatXmlCDATA cdata = new WechatXmlCDATA(key, content.getStringValue());
+            dataNodes.put(key, cdata);
+        } else if (content instanceof DefaultText) {
+            WechatXmlNode cdata = new WechatXmlNode(key, content.getStringValue());
+            dataNodes.put(key, cdata);
+        }
+    }
+
+    void setNode(String key, WechatXmlNode node) {
+        try {
+            WechatXmlNode newNode = node.clone();
+            newNode.setNodeKey(key);
+            dataNodes.put(key.toLowerCase(), node);
+        } catch (CloneNotSupportedException e) {
+            //throw exception
+        }
+    }
+
+    public WechatXmlNode getNode(String key) {
+        return dataNodes.get(key.toLowerCase());
+    }
+
+    public void setNodeValue(String key, Object value) {
+        WechatXmlNode node = dataNodes.get(key.toLowerCase());
         if (node != null) {
             node.setNodeValue(value);
+        } else {
+            if (value instanceof String) {
+                setNode(key.toLowerCase(), new WechatXmlCDATA(key, value));
+            } else {
+                setNode(key.toLowerCase(), new WechatXmlNode(key, value));
+            }
         }
     }
 
@@ -69,12 +97,46 @@ public class WechatXml {
         return valueMap;
     }
 
+    public boolean isMsgXml() {
+        WechatXmlNode msgTypeNode = dataNodes.get("msgtype");
+        if (msgTypeNode != null) {
+            return !"event".equals(msgTypeNode.getNodeValue().toString());
+        }
+        return false;
+    }
+
+
+    public boolean isEventXml() {
+        WechatXmlNode msgTypeNode = dataNodes.get("msgtype");
+        if (msgTypeNode != null) {
+            return "event".equals(msgTypeNode.getNodeValue().toString());
+        }
+        return false;
+    }
+
+    public boolean isBadXml() {
+        return isBadXml;
+    }
+
+    public WechatMsgXml convertToWechatMsgXml() {
+        if (isMsgXml()) {
+            if (isBadXml) {
+                return new WechatMsgXml(this.errerMsg, this.errerThrowable);
+            } else {
+                WechatMsgXml wechatMsgXml = new WechatMsgXml(dataNodes.get("msgtype").toString());
+                wechatMsgXml.dataNodes = dataNodes;
+                return wechatMsgXml;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("<xml>");
+        stringBuilder.append("<xml>\n");
         dataNodes.forEach((name, node) -> stringBuilder.append(node.toString()).append("\n"));
-        stringBuilder.append("</xml>");
+        stringBuilder.append("</xml>\n");
         return stringBuilder.toString();
     }
 

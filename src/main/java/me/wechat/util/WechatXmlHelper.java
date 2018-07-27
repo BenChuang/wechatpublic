@@ -3,6 +3,7 @@ package me.wechat.util;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.dom4j.tree.DefaultElement;
 
@@ -24,9 +25,11 @@ public class WechatXmlHelper {
             for (Object ele : elements) {
                 if (ele instanceof DefaultElement) {
                     DefaultElement element = ((DefaultElement) ele);
-                    String name = element.getName();
-                    String content = element.getText();
-                    wechatXml.setNodeValue(name, content);
+                    if (element.content().size() > 0) {
+                        Node content = (Node) element.content().get(0);
+                        String name = element.getName();
+                        wechatXml.putNode(name, content);
+                    }
                 }
             }
         }
@@ -58,17 +61,17 @@ public class WechatXmlHelper {
 
     public static WechatMsgXml reqToRespMsg(WechatXml reqXml) {
         WechatMsgXml respXml = new WechatMsgXml(WechatMsgType.TEXT);
-        respXml.setNodeValue("toUserName", reqXml.getNodeValue("fromUserName"));
-        respXml.setNodeValue("fromUserName", reqXml.getNodeValue("toUserName"));
-        respXml.setNodeValue("msgId", reqXml.getNodeValue("msgId"));
+        respXml.setNode("toUserName", reqXml.getNode("fromUserName"));
+        respXml.setNode("fromUserName", reqXml.getNode("toUserName"));
+        respXml.setNode("msgId", reqXml.getNode("msgId"));
         int currenTime = (int) (new Date().getTime() / 1000);
         respXml.setNodeValue("createtime", currenTime);
         return respXml;
     }
 
     private static String formatXml(String strXml) {
-        strXml = strXml.replaceAll("<\\s?!\\s?\\[\\s?CDATA\\s?\\[", "");
-        strXml = strXml.replaceAll("\\]\\s?\\]\\s?>", "");
+        strXml = strXml.replaceAll("<\\s?!\\s?\\[\\s?CDATA\\s?\\[", "<![CDATA[");
+        strXml = strXml.replaceAll("\\]\\s?\\]\\s?>", "]]>");
         strXml = strXml.replaceAll("\\&", "&amp;");
         strXml = strXml.replaceAll("\n", "");
         return strXml;
@@ -85,7 +88,7 @@ public class WechatXmlHelper {
         try {
             WechatMsgXml reqXml = WechatXmlHelper.getWechatMsgXml(reqStr);
             WechatMsgXml respXml = WechatXmlHelper.reqToRespMsg(reqXml);
-            respXml.setStringContent("hello wechat friend");
+            respXml.setMsgContent("hello wechat friend");
             System.out.println("req: " + reqXml.toString());
             System.out.println("resp: " + respXml.toString());
         } catch (DocumentException e) {
