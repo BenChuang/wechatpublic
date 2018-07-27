@@ -61,11 +61,11 @@ public class WechatXmlHelper {
 
     public static WechatMsgXml reqToRespMsg(WechatXml reqXml) {
         WechatMsgXml respXml = new WechatMsgXml(WechatMsgType.TEXT);
-        respXml.setNode("toUserName", reqXml.getNode("fromUserName"));
-        respXml.setNode("fromUserName", reqXml.getNode("toUserName"));
-        respXml.setNode("msgId", reqXml.getNode("msgId"));
+        respXml.setNode("ToUserName", reqXml.getNode("fromUserName"));
+        respXml.setNode("FromUserName", reqXml.getNode("toUserName"));
+        respXml.setNode("MsgId", reqXml.getNode("msgId"));
         int currenTime = (int) (new Date().getTime() / 1000);
-        respXml.setNodeValue("createtime", currenTime);
+        respXml.setNodeValue("Createtime", currenTime);
         return respXml;
     }
 

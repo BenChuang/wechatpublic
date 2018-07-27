@@ -25,13 +25,12 @@ public class WechatXml {
     }
 
     protected void putNode(String key, Node content) {
-        key = key.toLowerCase();
         if (content instanceof DefaultCDATA) {
             WechatXmlCDATA cdata = new WechatXmlCDATA(key, content.getStringValue());
-            dataNodes.put(key, cdata);
+            dataNodes.put(key.toLowerCase(), cdata);
         } else if (content instanceof DefaultText) {
             WechatXmlNode cdata = new WechatXmlNode(key, content.getStringValue());
-            dataNodes.put(key, cdata);
+            dataNodes.put(key.toLowerCase(), cdata);
         }
     }
 
@@ -55,9 +54,9 @@ public class WechatXml {
             node.setNodeValue(value);
         } else {
             if (value instanceof String) {
-                setNode(key.toLowerCase(), new WechatXmlCDATA(key, value));
+                setNode(key, new WechatXmlCDATA(key, value));
             } else {
-                setNode(key.toLowerCase(), new WechatXmlNode(key, value));
+                setNode(key, new WechatXmlNode(key, value));
             }
         }
     }
@@ -134,9 +133,9 @@ public class WechatXml {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("<xml>\n");
+        stringBuilder.append("<xml>");
         dataNodes.forEach((name, node) -> stringBuilder.append(node.toString()).append("\n"));
-        stringBuilder.append("</xml>\n");
+        stringBuilder.append("</xml>");
         return stringBuilder.toString();
     }
 

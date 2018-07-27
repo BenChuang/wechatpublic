@@ -8,7 +8,7 @@ public class WechatMsgXml extends WechatXml {
 
     public WechatMsgXml(String msgType) {
         super();
-        setNodeValue("msgType", msgType);
+        setNodeValue("MsgType", msgType);
     }
 
     public WechatMsgXml(String errerMsg, Throwable t) {
@@ -27,6 +27,6 @@ public class WechatMsgXml extends WechatXml {
     }
 
     public void setMsgContent(String content) {
-        setNodeValue("content", content);
+        setNodeValue("Content", content);
     }
 }
