@@ -65,7 +65,7 @@ public class WechatXmlHelper {
         respXml.setNode("FromUserName", reqXml.getNode("toUserName"));
         respXml.setNode("MsgId", reqXml.getNode("msgId"));
         int currenTime = (int) (new Date().getTime() / 1000);
-        respXml.setNodeValue("Createtime", currenTime);
+        respXml.setNodeValue("CreateTime", currenTime);
         return respXml;
     }
 
