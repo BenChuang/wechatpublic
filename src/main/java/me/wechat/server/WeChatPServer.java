@@ -43,7 +43,7 @@ public class WeChatPServer {
                             accessClient.getNow(userInfoApiPath, userInfoResp ->
                                     userInfoResp.bodyHandler(userInfoContent -> {
                                         UserInfo userInfo = WechatJsonHelper.parseText(userInfoContent.toString(), UserInfo.class);
-                                        System.out.println("userInfo: " + userInfoApiPath);
+                                        System.out.println("userInfo: " + userInfo);
                                     })
                             );
                         }
