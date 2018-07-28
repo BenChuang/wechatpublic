@@ -1,9 +1,12 @@
 package me.wechat.server;
 
+import com.google.common.base.Strings;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.*;
 import io.vertx.core.net.SocketAddress;
+import me.wechat.sever.entity.AccessToken;
+import me.wechat.sever.entity.UserInfo;
+import me.wechat.util.WechatJsonHelper;
 import me.wechat.util.WechatMsgXml;
 import me.wechat.util.WechatXml;
 import me.wechat.util.WechatXmlHelper;
@@ -17,7 +20,7 @@ public class WeChatPServer {
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         HttpServer server = vertx.createHttpServer();
-        HttpClient accessTokenClient = vertx.createHttpClient(new HttpClientOptions()
+        HttpClient accessClient = vertx.createHttpClient(new HttpClientOptions()
                 .setSsl(true)
                 .setDefaultHost("api.weixin.qq.com")
                 .setDefaultPort(443));
@@ -27,16 +30,27 @@ public class WeChatPServer {
             //区块链大数据分析页面
             if (req.path().startsWith("/index")) {
                 String code = req.getParam("code");
-                String accessTokenApiHost = "api.weixin.qq.com";
                 String accessTokenApiPath = "/sns/oauth2/access_token?appid=" + APP_ID + "&secret=" + APP_SECRET + "&code=" + code + "&grant_type=authorization_code";
-                accessTokenClient.getNow(accessTokenApiPath, resp -> {
-                    resp.bodyHandler(accessTokenContent -> {
-                        System.out.println("accessTokenContent: " + accessTokenContent);
+                accessClient.getNow(accessTokenApiPath, accessTokenResp ->
+                        accessTokenResp.bodyHandler(accessTokenContent -> {
+                        AccessToken access = WechatJsonHelper.parseText(accessTokenContent.toString(), AccessToken.class);
+                        System.out.println("accessToken: " + access);
+                        String accessToken = access.getAccessToken();
+                        String scrope = access.getScope();
+                        String openid = access.getOpenid();
+                        if (scrope.equals("snsapi_userinfo") && !Strings.isNullOrEmpty(accessToken)) {
+                            String userInfoApiPath = "sns/userinfo?access_token=" + accessToken + "&openid=" + openid + "&lang=zh_CN";
+                            accessClient.getNow(userInfoApiPath, userInfoResp ->
+                                    userInfoResp.bodyHandler(userInfoContent -> {
+                                        UserInfo userInfo = WechatJsonHelper.parseText(userInfoContent.toString(), UserInfo.class);
+                                        System.out.println("userInfo: " + userInfoApiPath);
+                                    })
+                            );
+                        }
                         req.response().putHeader("Content-type", "text/html;charset=utf-8").end("<html><head></head><body>hello world</body></html>", "utf-8");
-                    });
-                });
+                    }));
             } else {
-                req.bodyHandler((Buffer body) -> {
+                req.bodyHandler(body -> {
                     if (body.length() > 0) {
                         String reqXmlStr = body.toString();
                         System.out.println("req: " + reqXmlStr);

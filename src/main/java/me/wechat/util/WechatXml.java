@@ -24,7 +24,7 @@ public class WechatXml {
         this.errerThrowable = t;
     }
 
-    protected void putNode(String key, Node content) {
+    void putDomNode(String key, Node content) {
         if (content instanceof DefaultCDATA) {
             WechatXmlCDATA cdata = new WechatXmlCDATA(key, content.getStringValue());
             dataNodes.put(key.toLowerCase(), cdata);
@@ -34,7 +34,7 @@ public class WechatXml {
         }
     }
 
-    void setNode(String key, WechatXmlNode node) {
+    public void setNode(String key, WechatXmlNode node) {
         try {
             WechatXmlNode newNode = node.clone();
             newNode.setNodeKey(key);

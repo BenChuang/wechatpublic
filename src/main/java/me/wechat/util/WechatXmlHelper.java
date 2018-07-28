@@ -28,7 +28,7 @@ public class WechatXmlHelper {
                     if (element.content().size() > 0) {
                         Node content = (Node) element.content().get(0);
                         String name = element.getName();
-                        wechatXml.putNode(name, content);
+                        wechatXml.putDomNode(name, content);
                     }
                 }
             }
