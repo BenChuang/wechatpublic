@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.*;
 import io.vertx.core.net.SocketAddress;
-import me.wechat.sever.entity.AccessToken;
+import me.wechat.sever.entity.WebAccessToken;
 import me.wechat.sever.entity.UserInfo;
 import me.wechat.util.WechatJsonHelper;
 import me.wechat.util.WechatMsgXml;
@@ -33,7 +33,7 @@ public class WeChatPServer {
                 String accessTokenApiPath = "/sns/oauth2/access_token?appid=" + APP_ID + "&secret=" + APP_SECRET + "&code=" + code + "&grant_type=authorization_code";
                 accessClient.getNow(accessTokenApiPath, accessTokenResp ->
                         accessTokenResp.bodyHandler(accessTokenContent -> {
-                        AccessToken access = WechatJsonHelper.parseText(accessTokenContent.toString(), AccessToken.class);
+                        WebAccessToken access = WechatJsonHelper.parseText(accessTokenContent.toString(), WebAccessToken.class);
                         String accessToken = access.getAccessToken();
                         String scrope = access.getScope();
                         String openid = access.getOpenid();
@@ -53,7 +53,7 @@ public class WeChatPServer {
                                 req.response().putHeader("Content-type", "text/html;charset=utf-8").end("<html><head></head><body>hello world</body></html>", "utf-8");
                             }
                     }));
-            } else {
+            } else {//普通事件处理
                 req.bodyHandler(body -> {
                     if (body.length() > 0) {
                         String reqXmlStr = body.toString();

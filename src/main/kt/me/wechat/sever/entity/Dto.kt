@@ -3,14 +3,17 @@ package me.wechat.sever.entity
 import java.util.*
 
 
-data class WxCode(var errcode: Int = 0,
+data class WechatCode(var errcode: Int = 0,
                    var errmsg: String = "")
 
-data class AccessToken(var accessToken: String = "",
-                       var expiresIn: Int = 0,
-                       var refreshToken: String = "",
-                       var openid: String = "",
-                       var scope: String = "")
+data class CommonAccessToken(var accessToken: String = "",
+                             var expiresIn: Int = 0)
+
+data class WebAccessToken(var accessToken: String = "",
+                          var expiresIn: Int = 0,
+                          var refreshToken: String = "",
+                          var openid: String = "",
+                          var scope: String = "")
 
 data class UserInfo(var openid: String = "",
                     var nickname: String = "",

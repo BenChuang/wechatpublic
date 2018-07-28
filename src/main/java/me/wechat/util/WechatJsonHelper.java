@@ -1,7 +1,6 @@
 package me.wechat.util;
 
 import io.vertx.core.json.JsonObject;
-import me.wechat.sever.entity.AccessToken;
 import me.wechat.sever.entity.UserInfo;
 
 public class WechatJsonHelper {

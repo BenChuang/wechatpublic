@@ -8,8 +8,10 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.tree.DefaultElement;
 
 import java.io.StringReader;
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class WechatXmlHelper {
 
@@ -44,9 +46,17 @@ public class WechatXmlHelper {
     public static WechatMsgXml getWechatMsgXml(String strXml) throws DocumentException {
         WechatMsgXml msgXml = parseText(strXml, WechatMsgXml.class);
         String msgTypeStr = msgXml.getNodeString("msgType");
-        switch (msgTypeStr) {
-            case "text":
-                msgXml.setNodeValue("msgType", WechatMsgType.TEXT);
+        Field[] fields = WechatMsgType.class.getDeclaredFields();
+        for (Field msgTypeField : fields) {
+            try {
+                String msgType = (String) Optional.ofNullable(msgTypeField.get(null)).orElse("");
+                if (msgType.equals(msgTypeStr)) {
+                    msgXml.setNodeValue("msgType", msgType);
+                    break;
+                }
+            } catch (IllegalAccessException e) {
+                //log
+            }
         }
         return msgXml;
     }
