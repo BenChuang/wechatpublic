@@ -25,6 +25,12 @@
                         <id>compile</id>
                         <phase>process-sources</phase>
                         <goals> <goal>compile</goal> </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                                <sourceDir>${project.basedir}/src/main/java</sourceDir>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>test-compile</id>
@@ -103,6 +109,17 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-mp</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <!--artifactId：-->
+        <!--微信小程序：weixin-java-miniapp-->
+        <!--微信支付：weixin-java-pay-->
+        <!--微信开放平台：weixin-java-open-->
+        <!--公众号：weixin-java-mp-->
+        <!--企业号/企业微信：weixin-java-cp-->
     </dependencies>
 
 
