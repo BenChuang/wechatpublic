@@ -2,6 +2,10 @@ package me.wechat.sever.entity
 
 import java.util.*
 
+
+data class WxCode(var errcode: Int = 0,
+                   var errmsg: String = "")
+
 data class AccessToken(var accessToken: String = "",
                        var expiresIn: Int = 0,
                        var refreshToken: String = "",

@@ -34,20 +34,24 @@ public class WeChatPServer {
                 accessClient.getNow(accessTokenApiPath, accessTokenResp ->
                         accessTokenResp.bodyHandler(accessTokenContent -> {
                         AccessToken access = WechatJsonHelper.parseText(accessTokenContent.toString(), AccessToken.class);
-                        System.out.println("accessToken: " + access);
                         String accessToken = access.getAccessToken();
                         String scrope = access.getScope();
                         String openid = access.getOpenid();
-                        if (scrope.equals("snsapi_userinfo") && !Strings.isNullOrEmpty(accessToken)) {
-                            String userInfoApiPath = "/sns/userinfo?access_token=" + accessToken + "&openid=" + openid + "&lang=zh_CN";
-                            accessClient.getNow(userInfoApiPath, userInfoResp ->
-                                    userInfoResp.bodyHandler(userInfoContent -> {
-                                        UserInfo userInfo = WechatJsonHelper.parseText(userInfoContent.toString(), UserInfo.class);
-                                        System.out.println("userInfo: " + userInfo);
-                                    })
-                            );
-                        }
-                        req.response().putHeader("Content-type", "text/html;charset=utf-8").end("<html><head></head><body>hello world</body></html>", "utf-8");
+                            if (scrope.equals("snsapi_userinfo") && !Strings.isNullOrEmpty(accessToken)) {
+                                String userInfoApiPath = "/sns/userinfo?access_token=" + accessToken + "&openid=" + openid + "&lang=zh_CN";
+                                accessClient.getNow(userInfoApiPath, userInfoResp ->
+                                        userInfoResp.bodyHandler(userInfoContent -> {
+                                            UserInfo userInfo = WechatJsonHelper.parseText(userInfoContent.toString(), UserInfo.class);
+                                            req.response().putHeader("Content-type", "text/html;charset=utf-8")
+                                                    .end("<html><head></head><body>"
+                                                            + userInfo.getNickname()
+                                                            + "<img src='" + userInfo.getHeadimgurl() + "' />"
+                                                            +"</body></html>", "utf-8");
+                                        })
+                                );
+                            } else {
+                                req.response().putHeader("Content-type", "text/html;charset=utf-8").end("<html><head></head><body>hello world</body></html>", "utf-8");
+                            }
                     }));
             } else {
                 req.bodyHandler(body -> {
@@ -58,7 +62,6 @@ public class WeChatPServer {
                             WechatXml reqXml = WechatXmlHelper.getWechatXml(reqXmlStr);
                             if (reqXml.isMsgXml()) {
                                 WechatMsgXml respXml = WechatXmlHelper.reqToRespMsg(reqXml);
-                                //全部编码改成utf-8
                                 respXml.setMsgContent(new String("生活就像海洋，只有意志坚强的人才能到达彼岸".getBytes(), "utf-8"));
                                 System.out.println("resp: " + respXml.toString());
                                 req.response().putHeader("Content-type", "text/xml;charset=utf-8").end(respXml.toString(), "utf-8");
