@@ -40,10 +40,8 @@ public class WeChatPServer {
                         String openid = access.getOpenid();
                         if (scrope.equals("snsapi_userinfo") && !Strings.isNullOrEmpty(accessToken)) {
                             String userInfoApiPath = "/sns/userinfo?access_token=" + accessToken + "&openid=" + openid + "&lang=zh_CN";
-                            System.out.println(userInfoApiPath);
                             accessClient.getNow(userInfoApiPath, userInfoResp ->
                                     userInfoResp.bodyHandler(userInfoContent -> {
-                                        System.out.println(userInfoContent.toString());
                                         UserInfo userInfo = WechatJsonHelper.parseText(userInfoContent.toString(), UserInfo.class);
                                         System.out.println("userInfo: " + userInfoApiPath);
                                     })
